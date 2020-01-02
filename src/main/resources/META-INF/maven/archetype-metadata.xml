@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<archetype-descriptor name="basic">
+    <requiredProperties>
+        <requiredProperty key="archetypeVersion">
+            <defaultValue>RELEASE</defaultValue>
+       </requiredProperty>
+        <requiredProperty key="groupId">
+            <defaultValue>com.asimio.api</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="artifactId" />
+        <requiredProperty key="version">
+            <defaultValue>0-SNAPSHOT</defaultValue>
+        </requiredProperty>
+    </requiredProperties>
+    <fileSets>
+        <fileSet filtered="true" packaged="true">
+            <directory>src/main/java</directory>
+            <includes>
+                <include>**/*.java</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="true" packaged="false">
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+            ...
+        <!-- Similarly for src/test/java and src/test/resources -->
+    </fileSets>
+</archetype-descriptor>

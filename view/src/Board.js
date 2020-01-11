@@ -9,8 +9,8 @@ class Board extends React.Component {
     };
   }
 
-  renderCell(i) {
-    return <Cell value={i} />;
+  renderCell() {
+    return <Cell gameid={this.props.gameid} />;
   }
 
   multipleRender() {
@@ -27,7 +27,7 @@ class Board extends React.Component {
   }
 
   render() {
-    return <div>{this.multipleRender()}</div>;
+    return <div className="board">{this.multipleRender()}</div>;
   }
 }
 

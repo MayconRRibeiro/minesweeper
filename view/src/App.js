@@ -16,20 +16,19 @@ class App extends Component {
           </h1>
           <div className="content">
             <Route exact path="/" component={Home} />
-            <Route exact path="/play" component={() => <Play />} />
             <Route
               exact
-              path="/play/easy"
+              path="/easy"
               component={() => <Game difficulty="easy" />}
             />
             <Route
               exact
-              path="/play/medium"
+              path="/medium"
               component={() => <Game difficulty="medium" />}
             />
             <Route
               exact
-              path="/play/hard"
+              path="/hard"
               component={() => <Game difficulty="hard" />}
             />
           </div>

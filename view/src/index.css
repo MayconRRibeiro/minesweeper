@@ -2,6 +2,9 @@
   width: 100vw;
   height: 100vh;
 }
+#choose-difficulty{
+  color:red;
+}
 
 .cell {
   align-items: center;

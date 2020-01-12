@@ -1,7 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
 import Cell from './Cell.js';
-import fitty from 'fitty';
 
 class Board extends React.Component {
   constructor(props) {
@@ -19,7 +18,6 @@ class Board extends React.Component {
 
   initBoardData(height, width, mines) {
     let data = this.createEmptyArray(height, width);
-    //console.log(height);
     return data;
   }
 

@@ -1,20 +1,21 @@
 package minesweeper.api;
 
 import java.util.List;
+import minesweeper.api.logic.Difficulty;
+import minesweeper.api.logic.Game;
 import minesweeper.api.responses.GameCreateResponse;
 import minesweeper.api.responses.MultipleCellStatusResponse;
-import minesweeper.api.logic.Game;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:3000")
 public class GameController {
 
   private final GameRepository gameRepository;
@@ -24,13 +25,9 @@ public class GameController {
   }
 
   @PostMapping("game")
-  public ResponseEntity<GameCreateResponse> createGame(Game game) {
-    try {
-      gameRepository.save(game);
-    } catch (DataAccessException e) {
-      e.printStackTrace();
-      return new ResponseEntity<GameCreateResponse>(HttpStatus.BAD_REQUEST);
-    }
+  public ResponseEntity<GameCreateResponse> createGame(@RequestParam Difficulty difficulty) {
+    Game game = new Game(difficulty);
+    gameRepository.save(game);
     return new ResponseEntity<GameCreateResponse>(
         new GameCreateResponse(game.getId()), HttpStatus.CREATED);
   }
@@ -41,6 +38,8 @@ public class GameController {
   }
 
   // @GetMapping("game/{id}")
+
+  // @DeleteMapping
 
   @GetMapping("game/{id}/{x}/{y}")
   public ResponseEntity<MultipleCellStatusResponse> revealCells(

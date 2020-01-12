@@ -6,22 +6,17 @@ class Game extends React.Component {
     super(props);
     this.state = {
       gameid: null,
-      height: 8,
-      width: 8,
-      mines: 10,
+      height: null,
+      width: null,
+      mines: null,
     };
-  }
-
-  async componentWillMount() {
-    await this.startGame();
-    await this.getGameParams();
   }
 
   async startGame() {
     const url = new URL('http://127.0.0.1:8080/game/');
     const params = {difficulty: this.props.difficulty};
     url.search = new URLSearchParams(params).toString();
-    var response = await fetch(url, {method: 'POST'});
+    let response = await fetch(url, {method: 'POST'});
     const json = await response.json();
     this.setState({gameid: json.id});
   }
@@ -30,21 +25,29 @@ class Game extends React.Component {
     const url = 'http://127.0.0.1:8080/game/' + this.state.gameid;
     let response = await fetch(url, {method: 'get'});
     const json = await response.json();
-    this.setState({width:json.x, height:json.y, mines: json.minesCount});
+    this.setState({width: json.x, height: json.y, mines: json.minesCount});
+  }
+
+  async componentWillMount() {
+    await this.startGame();
+    await this.getGameParams();
   }
 
   render() {
     const {height, width, mines} = this.state;
-    return (
-      <div className="game">
-        <Board
-          height={height}
-          width={width}
-          mines={mines}
-          gameid={this.state.gameid}
-        />
-      </div>
-    );
+    if (height != null && width != null && mines != null) {
+      return (
+        <div className="game">
+          <Board
+            height={height}
+            width={width}
+            mines={mines}
+            gameid={this.state.gameid}
+          />
+        </div>
+      );
+    }
+    return <div className="game"></div>;
   }
 }
 

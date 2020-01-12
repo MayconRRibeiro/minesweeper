@@ -2,66 +2,39 @@
   width: 100vw;
   height: 100vh;
 }
+
 .cell {
   background: #fcfaf9;
   border: 1px solid #48e5c2;
-  border-radius: 4px;
-  float: left;
-  line-height: 20px;
-  height: 20px;
-  text-align: center;
-  width: 11%;
-  cursor: pointer;
   color: #333333;
-  font-weight: 600;
-  box-shadow: 10px;
+  cursor: pointer;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+
+.board-row{
+  float:left;
+  width:4%;
+  background: black;
+}
+
+.board{
+  max-width:100%;
+}
+.is-flag{
+  color:white;
 }
 
 .hidden {
   background: #333333;
 }
-.board-row {
-  height: 100%;
-  display: inline-grid;
-  width: 10%;
-}
-.is-mine {
-}
-.is-flag {
-  color: yellow;
-}
-.board {
-  margin-left: auto;
-  background: gray;
-  height: 100%;
-  width: 100%;
-  margin: auto;
-}
 
 .game {
-  width: 50vw;
-  /*max-width: 400px;*/
-  margin: 0 auto;
-  padding: 20px;
-  height: 50vw;
   background: #48e;
   margin-top: 15vh;
-
-  .game-info {
-    margin-bottom: 20px;
-    background: transparent;
-    padding: 7px;
-    text-align: center;
-    color: #fff;
-    min-height: 100px;
-    border-radius: 7px;
-  }
-  .info {
-    display: block;
-    margin-top: 15px;
-  }
-  h1,
-  p {
-    margin: 0;
-  }
+  margin: auto;
+  padding: 20px;
+  width: 50vw;
 }

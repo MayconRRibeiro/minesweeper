@@ -1,4 +1,6 @@
 import React from 'react';
+import jQuery from 'jquery';
+
 
 class Cell extends React.Component {
   getValue() {
@@ -7,10 +9,10 @@ class Cell extends React.Component {
       return '🚩';
     }
     if (value.isMine) {
-      return '💣';
+      return '';
     }
     if (value.neighbour === 0) {
-      return null;
+      return;
     }
     return value.neighbour;
   }
@@ -19,13 +21,15 @@ class Cell extends React.Component {
     const {value, onClick, cMenu} = this.props;
     let className =
       'cell' +
-      (value.isRevealed ? '' : ' hidden') +
+      (value.isRevealed ? ' open' : ' hidden') +
       (value.isMine ? ' is-mine' : '') +
       (value.isFlagged ? ' is-flag' : '');
 
+    //console.log(className);
+
     return (
       <div onClick={onClick} className={className} onContextMenu={cMenu}>
-        {this.getValue()}
+        <a>{this.getValue()}</a>
       </div>
     );
   }

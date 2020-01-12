@@ -1,5 +1,7 @@
 import React from 'react';
+import $ from 'jquery';
 import Cell from './Cell.js';
+import fitty from 'fitty';
 
 class Board extends React.Component {
   constructor(props) {
@@ -17,6 +19,7 @@ class Board extends React.Component {
 
   initBoardData(height, width, mines) {
     let data = this.createEmptyArray(height, width);
+    //console.log(height);
     return data;
   }
 
@@ -38,15 +41,32 @@ class Board extends React.Component {
     return data;
   }
 
+  async deleteGame() {
+    const url = 'http://127.0.0.1:8080/game/' + this.props.gameid;
+    await fetch(url, {method: 'delete'});
+  }
+
   async getCellsToReveal(x, y) {
     const url =
       'http://127.0.0.1:8080/game/' + this.props.gameid + '/' + x + '/' + y;
     let response = await fetch(url, {method: 'get'});
-    console.log(response);
     const json = await response.json();
     this.revealCells(json.cells);
   }
 
+  async resize() {
+    var cw = $('.cell').width();
+    $('.cell').css({height: cw + 'px'});
+    if(cw - 4 > 6){
+      cw = cw -4;
+    }
+    console.log(cw);
+    $('.cell').css({'font-size': cw})
+  }
+  async componentDidMount() {
+    this.resize();
+    window.addEventListener('resize', this.resize.bind(this));
+  }
   revealCells = dataFromChild => {
     let updatedData = this.state.boardData;
     for (const data of dataFromChild) {
@@ -55,6 +75,7 @@ class Board extends React.Component {
       if (data.status === -1) {
         updatedData[data.x][data.y].isMine = true;
         this.setState({gameStatus: 'You Lost.'});
+        this.deleteGame();
       } else {
         updatedData[data.x][data.y].neighbour = data.status;
       }
@@ -88,6 +109,8 @@ class Board extends React.Component {
       mines--;
     }
     if (mines === 0) {
+      this.deleteGame();
+      return;
       const mineArray = this.getMines(updatedData);
       const FlagArray = this.getFlags(updatedData);
       if (JSON.stringify(mineArray) === JSON.stringify(FlagArray)) {
@@ -103,30 +126,50 @@ class Board extends React.Component {
   }
 
   renderBoard(data) {
-    return data.map(datarow => {
-      return datarow.map(dataitem => {
-        return (
-          <div>
-            <Cell
-              onClick={() => this.handleClick(dataitem.x, dataitem.y)}
-              cMenu={e => this._handleContextMenu(e, dataitem.x, dataitem.y)}
-              value={dataitem}
-              cb={this.revealCells}
-            />
-            {datarow[datarow.length - 1] === dataitem ? (
-              <div className="clear" />
-            ) : (
-              ''
-            )}
-          </div>
+    let a = [];
+    let items = [];
+    for (const datarow of data) {
+      for (const dataitem of datarow) {
+        //console.log(dataitem);
+        a.push(
+          <Cell
+            onClick={() => this.handleClick(dataitem.x, dataitem.y)}
+            cMenu={e => this._handleContextMenu(e, dataitem.x, dataitem.y)}
+            value={dataitem}
+            //console.log(data.map);
+            cb={this.revealCells}
+          />
         );
-      });
-    });
+      }
+      items.push(<div className="board-row">{a}</div>);
+      a = [];
+    }
+    return <div className="board">{items}</div>;
+    //return data.map(datarow => {
+    //console.log(datarow);
+    //return datarow.map(dataitem => {
+    //return (
+    //<div>
+    //<Cell
+    //onClick={() => this.handleClick(dataitem.x, dataitem.y)}
+    //cMenu={e => this._handleContextMenu(e, dataitem.x, dataitem.y)}
+    //value={dataitem}
+    //cb={this.revealCells}
+    ///>
+    //{datarow[datarow.length - 1] === dataitem ? (
+    //<div className="clear" />
+    //) : (
+    //''
+    //)}
+    //</div>
+    //);
+    //});
+    //});
   }
 
   render() {
     return (
-      <div className="board">
+      <div>
         <div className="game-info">
           <h1 className="info">{this.state.gameStatus}</h1>
           <span className="info">Mines remaining: {this.state.mineCount}</span>

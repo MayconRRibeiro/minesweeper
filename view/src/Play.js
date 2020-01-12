@@ -7,7 +7,7 @@ class Play extends Component {
       <HashRouter>
         <div>
           <ul>
-            <h>choose difficulty </h>
+            <h1>choose difficulty </h1>
             <li>
               <NavLink exact to="/play/easy" href="/play/easy">
                 easy

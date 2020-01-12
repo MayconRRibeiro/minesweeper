@@ -42,7 +42,7 @@ class Board extends React.Component {
     const url =
       'http://127.0.0.1:8080/game/' + this.props.gameid + '/' + x + '/' + y;
     let response = await fetch(url, {method: 'get'});
-    //console.log(response);
+    console.log(response);
     const json = await response.json();
     this.revealCells(json.cells);
   }

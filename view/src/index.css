@@ -1,66 +1,50 @@
-/*.content {*/
-  /*width: 100vw;*/
-  /*height: 100vh;*/
-/*}*/
+.content {
+  width: 100vw;
+  height: 100vh;
+}
 .cell {
-  background: #FCFAF9;
-    border: 1px solid #48E5C2;
-    border-radius: 4px;
-    float: left;
-    line-height: 20px;
-    height: 20px;
-    text-align: center;
-    width: 11%;
-    cursor: pointer;
-    color: #333333;
-    font-weight: 600;
+  background: #fcfaf9;
+  border: 1px solid #48e5c2;
+  border-radius: 4px;
+  float: left;
+  line-height: 20px;
+  height: 20px;
+  text-align: center;
+  width: 11%;
+  cursor: pointer;
+  color: #333333;
+  font-weight: 600;
+  box-shadow: 10px;
 }
 
 .hidden {
-    background: #333333;
-  }
+  background: #333333;
+}
 .board-row {
-  height:100%;
-  display:inline-grid;
+  height: 100%;
+  display: inline-grid;
   width: 10%;
 }
-.is-mine{
-  background: red;
-
+.is-mine {
 }
-.is-flag{
-  color:yellow;
+.is-flag {
+  color: yellow;
 }
 .board {
   margin-left: auto;
-  background: blue;
-  width:50%;
-  margin-right: auto;
+  background: gray;
+  height: 100%;
+  width: 100%;
+  margin: auto;
 }
 
-.board TR TD{
-  border:1px solid white;
-  background: #999999;
-  width: 16px;
-  height: 16px;
-  text-align: center;
-}
-
-/*.board {*/
-  /*-ms-transform: translate(-50%, -50%);*/
-  /*background: blue;*/
-  /*height: 50vw;*/
-  /*left: 50%;*/
-  /*position: absolute;*/
-  /*top: 50%;*/
-  /*transform: translate(-50%, -50%);*/
-  /*width: 50vw;*/
-/*}*/
 .game {
-  max-width: 400px;
+  width: 50vw;
+  /*max-width: 400px;*/
   margin: 0 auto;
   padding: 20px;
-  background: #48E5C2;
+  height: 50vw;
+  background: #48e;
   margin-top: 15vh;
 
   .game-info {
@@ -71,14 +55,13 @@
     color: #fff;
     min-height: 100px;
     border-radius: 7px;
-    .info {
-      display: block;
-      margin-top: 15px;
-    }
-    h1,p {
-      margin: 0;
-    }
-
+  }
+  .info {
+    display: block;
+    margin-top: 15px;
+  }
+  h1,
+  p {
+    margin: 0;
   }
 }
-

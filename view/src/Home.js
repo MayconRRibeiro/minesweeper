@@ -1,13 +1,20 @@
 import React, {Component} from 'react';
-import Game from './Game.js';
+import {NavLink, HashRouter} from 'react-router-dom';
 
 class Home extends Component {
-
   render() {
     return (
-      <div className="game-board">
-        <Game difficulty={'hard'}  />
-      </div>
+      <HashRouter>
+        <div>
+          <a>
+            <NavLink exact to="/play" href="/play">
+              Play
+            </NavLink>
+          </a>
+          <h1>home</h1>
+          <a> press minesweeper to return home</a>
+        </div>
+      </HashRouter>
     );
   }
 }

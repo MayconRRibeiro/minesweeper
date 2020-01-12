@@ -4,10 +4,10 @@ class Cell extends React.Component {
   getValue() {
     const {value} = this.props;
     if (value.isFlagged) {
-      return '';
+      return '🚩';
     }
     if (value.isMine) {
-      return '';
+      return '💣';
     }
     if (value.neighbour === 0) {
       return null;

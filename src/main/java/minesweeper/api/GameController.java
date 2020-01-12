@@ -4,6 +4,7 @@ import java.util.List;
 import minesweeper.api.logic.Difficulty;
 import minesweeper.api.logic.Game;
 import minesweeper.api.responses.GameCreateResponse;
+import minesweeper.api.responses.GameStatusResponse;
 import minesweeper.api.responses.MultipleCellStatusResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,16 @@ public class GameController {
     return (List<Game>) gameRepository.findAll();
   }
 
-  // @GetMapping("game/{id}")
+  @GetMapping("game/{id}")
+  public ResponseEntity<GameStatusResponse> getGameStatus(@PathVariable String id) {
+    List<Game> games = (List<Game>) gameRepository.findAll();
+    for (Game it : games) {
+      if (it.getId().equals(id)) {
+        return new ResponseEntity<GameStatusResponse>(new GameStatusResponse(it), HttpStatus.OK);
+      }
+    }
+    return new ResponseEntity<GameStatusResponse>(HttpStatus.NOT_FOUND);
+  }
 
   // @DeleteMapping
 

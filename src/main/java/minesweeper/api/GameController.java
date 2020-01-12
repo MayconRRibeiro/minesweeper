@@ -9,6 +9,7 @@ import minesweeper.api.responses.MultipleCellStatusResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +50,11 @@ public class GameController {
     return new ResponseEntity<GameStatusResponse>(HttpStatus.NOT_FOUND);
   }
 
-  // @DeleteMapping
+  @DeleteMapping("game/{id}")
+  public ResponseEntity<String> deleteGame(@PathVariable String id) {
+    this.gameRepository.deleteById(id);
+    return new ResponseEntity<String>("deleted game with id " + id, HttpStatus.OK);
+  }
 
   @GetMapping("game/{id}/{x}/{y}")
   public ResponseEntity<MultipleCellStatusResponse> revealCells(

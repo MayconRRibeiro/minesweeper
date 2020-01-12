@@ -1,5 +1,4 @@
 import React from 'react';
-import jQuery from 'jquery';
 
 
 class Cell extends React.Component {

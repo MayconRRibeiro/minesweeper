@@ -36,6 +36,7 @@ class Game extends React.Component {
   render() {
     const {height, width, mines} = this.state;
     if (height != null && width != null && mines != null) {
+
       return (
         <div className="game">
           <Board
@@ -43,6 +44,7 @@ class Game extends React.Component {
             width={width}
             mines={mines}
             gameid={this.state.gameid}
+            difficulty = {this.props.difficulty}
           />
         </div>
       );

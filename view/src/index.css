@@ -4,27 +4,34 @@
 }
 
 .cell {
+  align-items: center;
   background: #fcfaf9;
   border: 1px solid #48e5c2;
   color: #333333;
   cursor: pointer;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  display: flex;
+  justify-content: center;
 }
 
-
-.board-row{
-  float:left;
-  width:4%;
+.board-row {
   background: black;
+  float: left;
+}
+.board-row-easy {
+  width: 12%;
+}
+.board-row-medium {
+  width: 7%;
+}
+.board-row-hard {
+  width: 4%;
 }
 
-.board{
-  max-width:100%;
+.board {
+  max-width: 100%;
 }
-.is-flag{
-  color:white;
+.is-flag {
+  color: white;
 }
 
 .hidden {

@@ -124,10 +124,19 @@ class Board extends React.Component {
       mineCount: mines,
     });
   }
+  onUnload = (event) => {
+    event.preventDefault();
+    event.returnValue = 'bruh';
+  }
+  componentWillUnmount(){
+    window.addEventListener("beforeunload", this.onUnload);
+  }
 
   renderBoard(data) {
     let a = [];
     let items = [];
+    let clsName = 'board-row board-row-' + this.props.difficulty;
+    console.log(clsName);
     for (const datarow of data) {
       for (const dataitem of datarow) {
         //console.log(dataitem);
@@ -141,7 +150,7 @@ class Board extends React.Component {
           />
         );
       }
-      items.push(<div className="board-row">{a}</div>);
+      items.push(<div className={clsName}>{a}</div>);
       a = [];
     }
     return <div className="board">{items}</div>;

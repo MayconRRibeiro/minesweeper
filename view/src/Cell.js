@@ -1,4 +1,5 @@
 import React from 'react';
+import logo from './b2.png';
 
 
 class Cell extends React.Component {

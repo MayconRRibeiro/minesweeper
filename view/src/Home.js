@@ -1,25 +1,26 @@
 import React, {Component} from 'react';
 import {NavLink, HashRouter} from 'react-router-dom';
 
-function onClickHanler() {
-  let x = document.getElementById('choose-difficulty');
-  if (x.style.display === 'none') {
-    x.style.display = 'block';
-  } else {
-    x.style.display = 'none';
-  }
-}
-
 class Home extends Component {
   componentDidMount() {
     let x = document.getElementById('choose-difficulty');
     x.style.display = 'none';
   }
+
+  onClickHanler() {
+    let x = document.getElementById('choose-difficulty');
+    if (x.style.display === 'none') {
+      x.style.display = 'block';
+    } else {
+      x.style.display = 'none';
+    }
+  }
+
   render() {
     return (
       <HashRouter>
         <div>
-          <button onClick={onClickHanler}>Play</button>
+          <button onClick={this.onClickHanler}>Play</button>
           <ul id="choose-difficulty">
             <h1>choose difficulty </h1>
             <li>

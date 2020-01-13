@@ -1,4 +1,6 @@
 import React from 'react';
+import {NavLink} from 'react-router-dom';
+import logo from './bomb.png';
 import $ from 'jquery';
 import Cell from './Cell.js';
 
@@ -11,7 +13,8 @@ class Board extends React.Component {
         this.props.width,
         this.props.mines
       ),
-      gameStatus: 'Game in progress',
+      seconds: 0,
+      gameStatus: ':)',
       mineCount: this.props.mines,
     };
   }
@@ -55,13 +58,16 @@ class Board extends React.Component {
   async resize() {
     var cw = $('.cell').width();
     $('.cell').css({height: cw + 'px'});
-    if(cw - 4 > 6){
-      cw = cw -4;
+    if (cw - 4 > 6) {
+      cw = cw - 4;
     }
     console.log(cw);
-    $('.cell').css({'font-size': cw})
+    $('.cell').css({'font-size': cw});
+    //cw = $('.close').height();
+    //$('.close').css({width: cw + 'px'});
   }
   async componentDidMount() {
+    console.log(this.state.seconds);
     this.resize();
     window.addEventListener('resize', this.resize.bind(this));
   }
@@ -72,8 +78,8 @@ class Board extends React.Component {
       updatedData[data.x][data.y].isFlagged = false;
       if (data.status === -1) {
         updatedData[data.x][data.y].isMine = true;
-        this.setState({gameStatus: 'You Lost.'});
-        this.deleteGame();
+        this.setState({gameStatus: ':('});
+        //this.deleteGame();
       } else {
         updatedData[data.x][data.y].neighbour = data.status;
       }
@@ -122,12 +128,12 @@ class Board extends React.Component {
       mineCount: mines,
     });
   }
-  onUnload = (event) => {
+  onUnload = event => {
     event.preventDefault();
     event.returnValue = 'bruh';
-  }
-  componentWillUnmount(){
-    window.addEventListener("beforeunload", this.onUnload);
+  };
+  componentWillUnmount() {
+    window.addEventListener('beforeunload', this.onUnload);
   }
 
   renderBoard(data) {
@@ -174,12 +180,30 @@ class Board extends React.Component {
     //});
   }
 
+  add() {
+    this.seconds++;
+  }
+  timer() {
+    this.timer = 0;
+    let t = setTimeout(this.add, 1000);
+    return <div>{this.timer}</div>;
+  }
   render() {
     return (
-      <div>
+      <div clasName="bruh">
+        <div className="menu" >
+          <img src={logo} className='logo'/>
+          <div className="name">Minesweeper</div>
+          <div className="close">
+            <NavLink exact to="/" href="">
+              X
+            </NavLink></div>
+
+        </div>
         <div className="game-info">
-          <h1 className="info">{this.state.gameStatus}</h1>
-          <span className="info">Mines remaining: {this.state.mineCount}</span>
+          <div className="info">{this.state.gameStatus}</div>
+          <div className="timer">{this.state.seconds}</div>
+          <div className="mines">{this.state.mineCount}</div>
         </div>
         {this.renderBoard(this.state.boardData)}
       </div>

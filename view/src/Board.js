@@ -1,6 +1,4 @@
 import React from 'react';
-import {NavLink} from 'react-router-dom';
-import logo from './bomb.png';
 import $ from 'jquery';
 import Cell from './Cell.js';
 
@@ -15,7 +13,7 @@ class Board extends React.Component {
       ),
       seconds: 0,
       gameStatus: ':)',
-      mineCount: this.props.mines,
+      mineCount: ('000' + this.props.mines).substr(-3),
     };
   }
 
@@ -54,24 +52,30 @@ class Board extends React.Component {
     const json = await response.json();
     this.revealCells(json.cells);
   }
+  async revealAllMines(updatedData) {
+    const url = 'http://127.0.0.1:8080/game/' + this.props.gameid + '/mines';
+    let response = await fetch(url, {method: 'get'});
+
+    const json = await response.json();
+    for (const mine of json.cells) {
+      updatedData[mine.x][mine.y].isMine = true;
+    }
+  }
 
   async resize() {
     var cw = $('.cell').width();
+    var c = $('.cell').value;
     $('.cell').css({height: cw + 'px'});
     if (cw - 4 > 6) {
       cw = cw - 4;
     }
-    console.log(cw);
     $('.cell').css({'font-size': cw});
-    //cw = $('.close').height();
-    //$('.close').css({width: cw + 'px'});
   }
   async componentDidMount() {
-    console.log(this.state.seconds);
     this.resize();
     window.addEventListener('resize', this.resize.bind(this));
   }
-  revealCells = dataFromChild => {
+  async revealCells(dataFromChild) {
     let updatedData = this.state.boardData;
     for (const data of dataFromChild) {
       updatedData[data.x][data.y].isRevealed = true;
@@ -79,6 +83,7 @@ class Board extends React.Component {
       if (data.status === -1) {
         updatedData[data.x][data.y].isMine = true;
         this.setState({gameStatus: ':('});
+        await this.revealAllMines(updatedData);
         //this.deleteGame();
       } else {
         updatedData[data.x][data.y].neighbour = data.status;
@@ -87,7 +92,7 @@ class Board extends React.Component {
     this.setState({
       boardData: updatedData,
     });
-  };
+  }
 
   async handleClick(x, y) {
     if (
@@ -111,46 +116,48 @@ class Board extends React.Component {
     } else {
       updatedData[x][y].isFlagged = true;
       mines--;
+      this.props.toggle(mines);
     }
     if (mines === 0) {
       this.deleteGame();
       return;
-      const mineArray = this.getMines(updatedData);
-      const FlagArray = this.getFlags(updatedData);
-      if (JSON.stringify(mineArray) === JSON.stringify(FlagArray)) {
-        this.setState({mineCount: 0, gameStatus: 'You Win.'});
-        this.revealBoard();
-        alert('You Win');
-      }
+      //const mineArray = this.getMines(updatedData);
+      //const FlagArray = this.getFlags(updatedData);
+      //if (JSON.stringify(mineArray) === JSON.stringify(FlagArray)) {
+      //this.setState({mineCount: 0, gameStatus: 'You Win.'});
+      //this.revealBoard();
+      //alert('You Win');
+      //}
     }
     this.setState({
       boardData: updatedData,
       mineCount: mines,
     });
   }
+
   onUnload = event => {
     event.preventDefault();
     event.returnValue = 'bruh';
   };
+
   componentWillUnmount() {
     window.addEventListener('beforeunload', this.onUnload);
+  }
+  componentDidUpdate() {
+    console.log('test');
   }
 
   renderBoard(data) {
     let a = [];
     let items = [];
     let clsName = 'board-row board-row-' + this.props.difficulty;
-    console.log(clsName);
     for (const datarow of data) {
       for (const dataitem of datarow) {
-        //console.log(dataitem);
         a.push(
           <Cell
             onClick={() => this.handleClick(dataitem.x, dataitem.y)}
             cMenu={e => this._handleContextMenu(e, dataitem.x, dataitem.y)}
             value={dataitem}
-            //console.log(data.map);
-            cb={this.revealCells}
           />
         );
       }
@@ -158,56 +165,10 @@ class Board extends React.Component {
       a = [];
     }
     return <div className="board">{items}</div>;
-    //return data.map(datarow => {
-    //console.log(datarow);
-    //return datarow.map(dataitem => {
-    //return (
-    //<div>
-    //<Cell
-    //onClick={() => this.handleClick(dataitem.x, dataitem.y)}
-    //cMenu={e => this._handleContextMenu(e, dataitem.x, dataitem.y)}
-    //value={dataitem}
-    //cb={this.revealCells}
-    ///>
-    //{datarow[datarow.length - 1] === dataitem ? (
-    //<div className="clear" />
-    //) : (
-    //''
-    //)}
-    //</div>
-    //);
-    //});
-    //});
   }
 
-  add() {
-    this.seconds++;
-  }
-  timer() {
-    this.timer = 0;
-    let t = setTimeout(this.add, 1000);
-    return <div>{this.timer}</div>;
-  }
   render() {
-    return (
-      <div clasName="bruh">
-        <div className="menu" >
-          <img src={logo} className='logo'/>
-          <div className="name">Minesweeper</div>
-          <div className="close">
-            <NavLink exact to="/" href="">
-              X
-            </NavLink></div>
-
-        </div>
-        <div className="game-info">
-          <div className="info">{this.state.gameStatus}</div>
-          <div className="timer">{this.state.seconds}</div>
-          <div className="mines">{this.state.mineCount}</div>
-        </div>
-        {this.renderBoard(this.state.boardData)}
-      </div>
-    );
+    return <div>{this.renderBoard(this.state.boardData)}</div>;
   }
 }
 

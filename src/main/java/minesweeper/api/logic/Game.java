@@ -1,16 +1,22 @@
 package minesweeper.api.logic;
 
+import java.awt.Point;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import minesweeper.api.responses.CellStatusResponse;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Entity
+@Table(name = "Model_Rest")
+@EnableTransactionManagement
 public class Game {
 
   @Id
@@ -37,6 +43,10 @@ public class Game {
   @Column(name = "minesCount")
   private int minesCount;
 
+  @Column(name = "minesLocations")
+  @ElementCollection
+  private List<Point> minesLocations;
+
   public Game(Difficulty difficulty) {
     this.difficulty = difficulty;
     if (difficulty == Difficulty.easy) {
@@ -54,9 +64,10 @@ public class Game {
     }
     this.cells = new int[this.x][this.y];
     this.revealed = new boolean[this.x][this.y];
+    this.minesLocations = new LinkedList<Point>();
     placeMines();
     placeNumbers();
-    printCells();
+    // printCells();
   }
 
   public Game() {}
@@ -83,6 +94,7 @@ public class Game {
       int y1 = rng.nextInt(this.y);
       if (this.cells[x1][y1] != -1) {
         this.cells[x1][y1] = -1;
+        this.minesLocations.add(new Point(x1, y1));
         mines--;
       }
     }
@@ -152,6 +164,14 @@ public class Game {
     }
   }
 
+  public List<CellStatusResponse> revealMines() {
+    List<CellStatusResponse> response = new LinkedList<CellStatusResponse>();
+    for (Point it : minesLocations) {
+      response.add(new CellStatusResponse(it.x, it.y, this.cells[it.x][it.y]));
+    }
+    return response;
+  }
+
   public List<CellStatusResponse> getCellsToReveal(int x, int y) {
     List<CellStatusResponse> response = new LinkedList<CellStatusResponse>();
     if (this.revealed[x][y] == false) {
@@ -162,9 +182,7 @@ public class Game {
         this.revealed[x][y] = true;
       } else {
         response.add(new CellStatusResponse(x, y, this.cells[x][y]));
-        //System.out.println(this.cells[x][y]);
         this.revealed[x][y] = true;
-        // floodFill(response, x, y);
       }
     }
     return response;
@@ -188,5 +206,21 @@ public class Game {
 
   public Difficulty getDifficulty() {
     return difficulty;
+  }
+
+  public int[][] getCells() {
+    return cells;
+  }
+
+  public boolean[][] getRevealed() {
+    return revealed;
+  }
+
+  public int getMinesCount() {
+    return minesCount;
+  }
+
+  public List<Point> getMinesLocations() {
+    return minesLocations;
   }
 }

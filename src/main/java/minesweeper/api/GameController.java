@@ -50,6 +50,18 @@ public class GameController {
     return new ResponseEntity<GameStatusResponse>(HttpStatus.NOT_FOUND);
   }
 
+  @GetMapping("game/{id}/mines")
+  public ResponseEntity<MultipleCellStatusResponse> getMines(@PathVariable String id) {
+    List<Game> games = (List<Game>) gameRepository.findAll();
+    for (Game it : games) {
+      if (it.getId().equals(id)) {
+        return new ResponseEntity<MultipleCellStatusResponse>(
+            new MultipleCellStatusResponse(it.revealMines()), HttpStatus.OK);
+      }
+    }
+    return new ResponseEntity<MultipleCellStatusResponse>(HttpStatus.NOT_FOUND);
+  }
+
   @DeleteMapping("game/{id}")
   public ResponseEntity<String> deleteGame(@PathVariable String id) {
     this.gameRepository.deleteById(id);

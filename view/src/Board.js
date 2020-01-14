@@ -12,9 +12,10 @@ class Board extends React.Component {
         this.props.mines
       ),
       seconds: 0,
-      gameStatus: ':)',
+      gameStatus: 'running',
       mineCount: ('000' + this.props.mines).substr(-3),
     };
+    console.log(this.state);
   }
 
   initBoardData(height, width, mines) {
@@ -40,6 +41,14 @@ class Board extends React.Component {
     return data;
   }
 
+  resetBoard(height, width, mines) {
+    this.setState({
+      boardData: this.initBoardData(height, width, mines),
+      seconds: 0,
+      gameStatus: 'running',
+    });
+  }
+
   async deleteGame() {
     const url = 'http://127.0.0.1:8080/game/' + this.props.gameid;
     await fetch(url, {method: 'delete'});
@@ -52,10 +61,10 @@ class Board extends React.Component {
     const json = await response.json();
     this.revealCells(json.cells);
   }
+
   async revealAllMines(updatedData) {
     const url = 'http://127.0.0.1:8080/game/' + this.props.gameid + '/mines';
     let response = await fetch(url, {method: 'get'});
-
     const json = await response.json();
     for (const mine of json.cells) {
       updatedData[mine.x][mine.y].isMine = true;
@@ -71,10 +80,12 @@ class Board extends React.Component {
     }
     $('.cell').css({'font-size': cw});
   }
+
   async componentDidMount() {
     this.resize();
     window.addEventListener('resize', this.resize.bind(this));
   }
+
   async revealCells(dataFromChild) {
     let updatedData = this.state.boardData;
     for (const data of dataFromChild) {
@@ -82,7 +93,7 @@ class Board extends React.Component {
       updatedData[data.x][data.y].isFlagged = false;
       if (data.status === -1) {
         updatedData[data.x][data.y].isMine = true;
-        this.setState({gameStatus: ':('});
+        this.setState({gameStatus: 'lost'});
         await this.revealAllMines(updatedData);
         //this.deleteGame();
       } else {
@@ -124,7 +135,7 @@ class Board extends React.Component {
       //const mineArray = this.getMines(updatedData);
       //const FlagArray = this.getFlags(updatedData);
       //if (JSON.stringify(mineArray) === JSON.stringify(FlagArray)) {
-      //this.setState({mineCount: 0, gameStatus: 'You Win.'});
+      //this.setState({mineCount: 0, gameStatus: 'won'});
       //this.revealBoard();
       //alert('You Win');
       //}
@@ -142,9 +153,6 @@ class Board extends React.Component {
 
   componentWillUnmount() {
     window.addEventListener('beforeunload', this.onUnload);
-  }
-  componentDidUpdate() {
-    console.log('test');
   }
 
   renderBoard(data) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {NavLink} from 'react-router-dom';
+import {NavLink, Link} from 'react-router-dom';
 import logo from './images/bomb.png';
 import Board from './Board.js';
 
@@ -7,18 +7,22 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      difficulty: null,
       gameid: null,
       height: null,
       width: null,
       mines: null,
-      minesRemaining: 0,
-      time : 0
+      minesRemaining: null,
+      time: null,
     };
     this.getMinesRemainingCallback = this.getMinesRemainingCallback.bind(this);
+    this.reload = this.reload.bind(this);
+    this.boardElement = React.createRef();
   }
 
   async startGame() {
     const url = new URL('http://127.0.0.1:8080/game/');
+    this.setState({difficulty: this.props.difficulty});
     const params = {difficulty: this.props.difficulty};
     url.search = new URLSearchParams(params).toString();
     let response = await fetch(url, {method: 'POST'});
@@ -30,7 +34,13 @@ class Game extends React.Component {
     const url = 'http://127.0.0.1:8080/game/' + this.state.gameid;
     let response = await fetch(url, {method: 'get'});
     const json = await response.json();
-    this.setState({width: json.x, height: json.y, mines: json.minesCount});
+    this.setState({
+      width: json.x,
+      height: json.y,
+      mines: json.minesCount,
+      minesRemaining: ('000' + json.minesCount).substr(-3),
+      time: '000',
+    });
   }
 
   async componentWillMount() {
@@ -39,18 +49,41 @@ class Game extends React.Component {
   }
 
   getMinesRemainingCallback(dataFromChild) {
-    this.setState({minesRemaining: dataFromChild})
+    this.setState({minesRemaining: ('000' + dataFromChild).substr(-3)});
   }
-  getTimeCallback(dataFromChild){
-    this.setState({time: dataFromChild});
+  getTimeCallback(dataFromChild) {
+    this.setState({time: ('000' + dataFromChild).substr(-3)});
   }
   gameStatus() {
     return ':)';
   }
+  async reload() {
+    await this.startGame();
+    await this.getGameParams();
+    this.boardElement.current.resetBoard(
+      this.state.height,
+      this.state.width,
+      this.state.mines
+    );
+  }
 
   render() {
-    const {height, width, mines} = this.state;
-    if (height != null && width != null && mines != null) {
+    const {
+      difficulty,
+      height,
+      width,
+      mines,
+      minesRemaining,
+      time,
+    } = this.state;
+    if (
+      difficulty != null &&
+      height != null &&
+      width != null &&
+      mines != null &&
+      minesRemaining != null &&
+      time != null
+    ) {
       return (
         <div className="ts">
           <div className="game">
@@ -66,19 +99,18 @@ class Game extends React.Component {
             <div className="overlay">
               <div className="game-info">
                 <div className="mines">
-                  <span className="centered-text">
-                    {this.state.minesRemaining}
-                  </span>
+                  <span className="centered-text">{minesRemaining}</span>
                 </div>
-                <div className="info hidden">
+                <div className="info hidden" onClick={this.reload}>
                   <span>{this.gameStatus()}</span>
                 </div>
                 <div className="timer">
-                  <span className="centered-text">{this.state.time}</span>
+                  <span className="centered-text">{time}</span>
                 </div>
               </div>
             </div>
             <Board
+              ref={this.boardElement}
               height={height}
               width={width}
               mines={mines}
@@ -94,7 +126,7 @@ class Game extends React.Component {
         </div>
       );
     }
-    return <div className="game"></div>;
+    return <div className="game">Loading</div>;
   }
 }
 

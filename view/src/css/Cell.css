@@ -1,0 +1,26 @@
+.cell {
+  background-color: #bdbdbd;
+  border: 2px solid #7a7a7a;
+  /*box-sizing:border-box;*/
+  color: #333333;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+}
+.cell:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+.is-flag {
+  color: white;
+}
+
+.hidden {
+  padding: 0;
+  background-color: #bdbdbd;
+  border-bottom: 2px solid #7a7a7a;
+  border-left: 2px solid #ffffff;
+  border-top: 2px solid #ffffff;
+  border-right: 2px solid #7a7a7a;
+}

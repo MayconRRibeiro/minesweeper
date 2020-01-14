@@ -1,0 +1,16 @@
+/*TODO zmienic border w zaleznosci od diff*/
+#choose-difficulty {
+}
+
+.footer {
+  background: #bdbdbd;
+  bottom: 0;
+  display: flex;
+  font-size: 0.8rem;
+  height: 1rem;
+  justify-content: center;
+  left: 0;
+  padding: 0.5rem;
+  position: absolute;
+  right: 0;
+}

@@ -1,0 +1,47 @@
+.game {
+  background: #d3cec5;
+  margin: auto;
+  width: 50vw;
+}
+.buttons {
+  width: 50vw;
+  text-align: center;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+.choose-click {
+  width: 50%;
+}
+.choose-click:selected {
+  background: black;
+}
+.choose-flag {
+  width: 50%;
+}
+@media only screen and (max-width: 1000px) {
+  .game {
+    width: 60vw;
+  }
+  .buttons {
+    width: 60vw;
+  }
+}
+@media only screen and (max-width: 800px) {
+  .game {
+    width: 70vw;
+  }
+  .buttons {
+    width: 70vw;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .game {
+    width: 95vw;
+  }
+  .buttons {
+    width: 95vw;
+  }
+}

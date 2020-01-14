@@ -1,0 +1,100 @@
+.menu {
+  border: 1px red;
+  background-image: linear-gradient(to right, #242b5a, #90b6d7);
+  padding: 2px;
+  margin: 2px;
+}
+.logo {
+  display: inline-block;
+  margin-right: 5px;
+  font-size: 1.3rem;
+  max-height: 1.3rem;
+  margin-left: 2px;
+}
+.name {
+  color: white;
+  font-size: 1.4rem;
+  display: inline-block;
+  font-weight: 500;
+}
+.close {
+  text-align: center;
+  display: inline-block;
+  background-color: #bdbdbd;
+  border-bottom: 3px solid #7a7a7a;
+  border-left: 3px solid #ffffff;
+  border-top: 3px solid #ffffff;
+  border-right: 3px solid #7a7a7a;
+  height: 1rem;
+  width: 1rem;
+  font-size: 1rem;
+  margin: 0;
+  margin-bottom: 2px;
+  float: right;
+}
+.overlay {
+  background: #c0c0c0;
+  border-bottom: 2px solid #7a7a7a;
+  border-left: 2px solid #ffffff;
+  border-top: 2px solid #ffffff;
+  border-right: 2px solid #7a7a7a;
+  margin: 2px;
+  margin-top: 5px;
+}
+.game-info {
+  background-color: #bdbdbd;
+  font-size: 2rem;
+  padding: 1px;
+  box-sizing: border-box;
+  grid-column: 2;
+  grid-row: 2;
+  border-top: 2px solid #7a7a7a;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  border-left: 2px solid #7a7a7a;
+  font-weight: bold;
+  margin: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.info {
+  background: #c0c0c0;
+  color: white;
+  text-align: center;
+}
+.mines {
+  background: black;
+  color: red;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  text-align: left;
+}
+.timer {
+  background: black;
+  color: red;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  text-align: right;
+}
+.board-row {
+  box-sizing: border-box;
+  background-color: #bdbdbd;
+  border: 1px solid #bdbdbd;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+}
+.board-row-easy {
+  width: 12.5%;
+}
+.board-row-medium {
+  width: 7.1428%;
+}
+.board-row-hard {
+  width: 4.5454%;
+}
+
+.board {
+  max-width: 100%;
+}

@@ -20,7 +20,7 @@
 .close {
   text-align: center;
   display: inline-block;
-  background-color: #bdbdbd;
+  background-color: #e5e8e0;
   border-bottom: 3px solid #7a7a7a;
   border-left: 3px solid #ffffff;
   border-top: 3px solid #ffffff;
@@ -34,10 +34,10 @@
 }
 .overlay {
   background: #c0c0c0;
-  border-bottom: 2px solid #7a7a7a;
-  border-left: 2px solid #ffffff;
-  border-top: 2px solid #ffffff;
-  border-right: 2px solid #7a7a7a;
+  border-bottom: 4px solid #7a7a7a;
+  border-left: 4px solid #ffffff;
+  border-top: 4px solid #ffffff;
+  border-right: 4px solid #7a7a7a;
   margin: 2px;
   margin-top: 5px;
 }
@@ -48,10 +48,10 @@
   box-sizing: border-box;
   grid-column: 2;
   grid-row: 2;
-  border-top: 2px solid #7a7a7a;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-  border-left: 2px solid #7a7a7a;
+  border-top: 4px solid #7a7a7a;
+  border-right: 4px solid #ffffff;
+  border-bottom: 4px solid #ffffff;
+  border-left: 4px solid #7a7a7a;
   font-weight: bold;
   margin: 5px;
   display: flex;
@@ -59,31 +59,42 @@
   justify-content: space-between;
 }
 .info {
-  background: #c0c0c0;
-  color: white;
-  text-align: center;
+  background: #bfbfbf;
+  margin: 2px;
+  margin-bottom: 5px;
+  color: yellow;
+  display: flex;
+  justify-content: center;
 }
 .mines {
+  margin: 2px;
   background: black;
   color: red;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: left;
 }
 .timer {
+  margin: 2px;
   background: black;
   color: red;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   text-align: right;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .board-row {
-  box-sizing: border-box;
+
   background-color: #bdbdbd;
-  border: 1px solid #bdbdbd;
   margin: 0;
   padding: 0;
   display: inline-block;
+  margin-top:5px;
 }
 .board-row-easy {
   width: 12.5%;

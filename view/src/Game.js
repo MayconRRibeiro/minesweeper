@@ -1,4 +1,6 @@
 import React from 'react';
+import {NavLink} from 'react-router-dom';
+import logo from './images/bomb.png';
 import Board from './Board.js';
 
 class Game extends React.Component {
@@ -36,16 +38,30 @@ class Game extends React.Component {
   render() {
     const {height, width, mines} = this.state;
     if (height != null && width != null && mines != null) {
-
       return (
-        <div className="game">
-          <Board
-            height={height}
-            width={width}
-            mines={mines}
-            gameid={this.state.gameid}
-            difficulty = {this.props.difficulty}
-          />
+        <div className="ts">
+          <div className="game">
+            <div className="menu">
+              <img src={logo} className="logo" />
+              <div className="name">Minesweeper</div>
+              <div className="close">
+                <NavLink exact to="/" href="">
+                  X
+                </NavLink>
+              </div>
+            </div>
+            <Board
+              height={height}
+              width={width}
+              mines={mines}
+              gameid={this.state.gameid}
+              difficulty={this.props.difficulty}
+            />
+          </div>
+          <div className="buttons">
+            <button className="choose-click hidden">flag</button>
+            <button className="choose-flag">click</button>
+          </div>
         </div>
       );
     }

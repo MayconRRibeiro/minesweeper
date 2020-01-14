@@ -6,24 +6,16 @@ class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      boardData: this.initBoardData(
-        this.props.height,
-        this.props.width,
-        this.props.mines
-      ),
+      boardData: this.initBoard(this.props.height, this.props.width),
       seconds: 0,
       gameStatus: 'running',
       mineCount: ('000' + this.props.mines).substr(-3),
+      mines: null,
     };
     console.log(this.state);
   }
 
-  initBoardData(height, width, mines) {
-    let data = this.createEmptyArray(height, width);
-    return data;
-  }
-
-  createEmptyArray(height, width) {
+  initBoard(height, width) {
     let data = [];
     for (let x = 0; x < height; x++) {
       data.push([]);
@@ -41,12 +33,15 @@ class Board extends React.Component {
     return data;
   }
 
-  resetBoard(height, width, mines) {
+  async resetBoard(height, width) {
     this.setState({
-      boardData: this.initBoardData(height, width, mines),
+      boardData: this.initBoard(height, width),
       seconds: 0,
       gameStatus: 'running',
     });
+    const mines = await this.fetchAllMines();
+    this.setState({mines: mines});
+    console.log(this.state);
   }
 
   async deleteGame() {
@@ -54,7 +49,7 @@ class Board extends React.Component {
     await fetch(url, {method: 'delete'});
   }
 
-  async getCellsToReveal(x, y) {
+  async fetchCellsToReveal(x, y) {
     const url =
       'http://127.0.0.1:8080/game/' + this.props.gameid + '/' + x + '/' + y;
     let response = await fetch(url, {method: 'get'});
@@ -62,11 +57,19 @@ class Board extends React.Component {
     this.revealCells(json.cells);
   }
 
-  async revealAllMines(updatedData) {
+  async fetchAllMines() {
     const url = 'http://127.0.0.1:8080/game/' + this.props.gameid + '/mines';
     let response = await fetch(url, {method: 'get'});
     const json = await response.json();
+    let result = [];
     for (const mine of json.cells) {
+      result.push({x: mine.x, y: mine.y});
+    }
+    return result;
+  }
+
+  async revealAllMines(updatedData) {
+    for (const mine of this.state.mines) {
       updatedData[mine.x][mine.y].isMine = true;
     }
   }
@@ -84,6 +87,9 @@ class Board extends React.Component {
   async componentDidMount() {
     this.resize();
     window.addEventListener('resize', this.resize.bind(this));
+    const mines = await this.fetchAllMines();
+    this.setState({mines: mines});
+    console.log(this.state);
   }
 
   async revealCells(dataFromChild) {
@@ -112,7 +118,46 @@ class Board extends React.Component {
     ) {
       return null;
     }
-    this.getCellsToReveal(x, y);
+    this.fetchCellsToReveal(x, y);
+  }
+
+  getFlags(data) {
+    let flags = [];
+    for (const datarow of data) {
+      for (const dataitem of datarow) {
+        if (dataitem.isFlagged) {
+          flags.push({x: dataitem.x, y: dataitem.y});
+        }
+      }
+    }
+    return flags;
+  }
+
+  checkWinCondition(data) {
+    let cells = [];
+    for (const datarow of data) {
+      for (const dataitem of datarow) {
+        if (!dataitem.isRevealed) {
+          cells.push({x: dataitem.x, y: dataitem.y});
+          if (cells.length > this.state.mines.length) {
+            return false;
+          }
+        }
+      }
+    }
+    let gameWon = false;
+    for (const mine of this.state.mines) {
+      gameWon = false;
+      for (const cell of cells) {
+        if (mine.x === cell.x && mine.y === cell.y) {
+          gameWon = true;
+        }
+      }
+      if (gameWon === false) {
+        return false;
+      }
+    }
+    return true;
   }
 
   _handleContextMenu(e, x, y) {
@@ -120,7 +165,9 @@ class Board extends React.Component {
     let updatedData = this.state.boardData;
     let mines = this.state.mineCount;
     // check if already revealed
-    if (updatedData[x][y].isRevealed) return;
+    if (updatedData[x][y].isRevealed) {
+      return;
+    }
     if (updatedData[x][y].isFlagged) {
       updatedData[x][y].isFlagged = false;
       mines++;
@@ -129,21 +176,19 @@ class Board extends React.Component {
       mines--;
       this.props.toggle(mines);
     }
-    if (mines === 0) {
-      this.deleteGame();
-      return;
-      //const mineArray = this.getMines(updatedData);
-      //const FlagArray = this.getFlags(updatedData);
-      //if (JSON.stringify(mineArray) === JSON.stringify(FlagArray)) {
-      //this.setState({mineCount: 0, gameStatus: 'won'});
-      //this.revealBoard();
-      //alert('You Win');
-      //}
-    }
     this.setState({
       boardData: updatedData,
       mineCount: mines,
     });
+  }
+
+  componentDidUpdate(){
+    let updatedData = this.state.boardData;
+    console.log(this.checkWinCondition(updatedData));
+    if (this.checkWinCondition(updatedData) === true) {
+      console.log('good game ');
+    }
+
   }
 
   onUnload = event => {

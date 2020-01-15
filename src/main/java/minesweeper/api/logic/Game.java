@@ -188,6 +188,16 @@ public class Game {
     return response;
   }
 
+  public List<CellStatusResponse> revealBoard(){
+    List<CellStatusResponse> response = new LinkedList<CellStatusResponse>();
+    for(int x = 0; x< this.x; x++){
+      for(int y = 0; y< this.y; y++){
+        response.add(new CellStatusResponse(x, y, this.cells[x][y]));
+      }
+    }
+    return response;
+  }
+
   public String getId() {
     return id;
   }

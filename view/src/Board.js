@@ -8,11 +8,12 @@ class Board extends React.Component {
     this.state = {
       boardData: this.initBoard(this.props.height, this.props.width),
       seconds: 0,
-      gameStatus: 'running',
+      gameStatus: 'stop',
       mineCount: ('000' + this.props.mines).substr(-3),
       mines: null,
+      timer: null
     };
-    console.log(this.state);
+    this.add = this.add.bind(this);
   }
 
   initBoard(height, width) {
@@ -40,7 +41,8 @@ class Board extends React.Component {
       gameStatus: 'running',
     });
     const mines = await this.fetchAllMines();
-    this.setState({mines: mines});
+    this.setState({mines: mines, gameStatus: 'stop' });
+    clearInterval(this.state.timer);
     console.log(this.state);
   }
 
@@ -100,6 +102,7 @@ class Board extends React.Component {
       if (data.status === -1) {
         updatedData[data.x][data.y].isMine = true;
         this.setState({gameStatus: 'lost'});
+        clearInterval(this.state.timer);
         await this.revealAllMines(updatedData);
         //this.deleteGame();
       } else {
@@ -111,7 +114,27 @@ class Board extends React.Component {
     });
   }
 
+  async add(){
+    let seconds = this.state.seconds;
+    if(seconds === 999){
+      return;
+    }
+    seconds ++;
+    this.setState({seconds:seconds});
+    this.props.getTime(this.state.seconds);
+  }
+
+  async timer(){
+    let timer = setInterval(this.add, 1000);
+    this.setState({timer: timer});
+  }
+
   async handleClick(x, y) {
+    console.log(this.state.gameStatus);
+    if (this.state.gameStatus == 'stop') {
+      this.timer();
+      this.setState({gameStatus: 'running'});
+    }
     if (
       this.state.boardData[x][y].isRevealed ||
       this.state.boardData[x][y].isFlagged

@@ -16,6 +16,7 @@ class Game extends React.Component {
       time: null,
     };
     this.getMinesRemainingCallback = this.getMinesRemainingCallback.bind(this);
+    this.getTimeCallback = this.getTimeCallback.bind(this);
     this.reload = this.reload.bind(this);
     this.boardElement = React.createRef();
   }
@@ -117,6 +118,7 @@ class Game extends React.Component {
               gameid={this.state.gameid}
               difficulty={this.props.difficulty}
               toggle={this.getMinesRemainingCallback}
+              getTime = {this.getTimeCallback}
             />
           </div>
           <div className="buttons">

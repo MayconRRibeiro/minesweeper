@@ -11,7 +11,7 @@ class Board extends React.Component {
       gameStatus: 'stop',
       mineCount: ('000' + this.props.mines).substr(-3),
       mines: null,
-      timer: null
+      timer: null,
     };
     this.add = this.add.bind(this);
   }
@@ -41,7 +41,8 @@ class Board extends React.Component {
       gameStatus: 'running',
     });
     const mines = await this.fetchAllMines();
-    this.setState({mines: mines, gameStatus: 'stop' });
+    this.setState({mines: mines, gameStatus: 'stop'});
+    this.props.getStatus(this.state.gameStatus);
     clearInterval(this.state.timer);
     console.log(this.state);
   }
@@ -78,7 +79,6 @@ class Board extends React.Component {
 
   async resize() {
     var cw = $('.cell').width();
-    var c = $('.cell').value;
     $('.cell').css({height: cw + 'px'});
     if (cw - 4 > 6) {
       cw = cw - 4;
@@ -102,6 +102,7 @@ class Board extends React.Component {
       if (data.status === -1) {
         updatedData[data.x][data.y].isMine = true;
         this.setState({gameStatus: 'lost'});
+        this.props.getStatus(this.state.gameStatus);
         clearInterval(this.state.timer);
         await this.revealAllMines(updatedData);
         //this.deleteGame();
@@ -114,26 +115,27 @@ class Board extends React.Component {
     });
   }
 
-  async add(){
+  async add() {
     let seconds = this.state.seconds;
-    if(seconds === 999){
+    if (seconds === 999) {
       return;
     }
-    seconds ++;
-    this.setState({seconds:seconds});
+    seconds++;
+    this.setState({seconds: seconds});
     this.props.getTime(this.state.seconds);
   }
 
-  async timer(){
+  async timer() {
     let timer = setInterval(this.add, 1000);
     this.setState({timer: timer});
   }
 
   async handleClick(x, y) {
-    console.log(this.state.gameStatus);
+    //console.log(this.state.gameStatus);
     if (this.state.gameStatus == 'stop') {
       this.timer();
       this.setState({gameStatus: 'running'});
+      this.props.getStatus(this.state.gameStatus);
     }
     if (
       this.state.boardData[x][y].isRevealed ||
@@ -145,23 +147,22 @@ class Board extends React.Component {
   }
 
   checkWinCondition(data) {
-    let cells = [];
+    let flags = [];
     for (const datarow of data) {
       for (const dataitem of datarow) {
-        if (!dataitem.isRevealed) {
-          cells.push({x: dataitem.x, y: dataitem.y});
-          if (cells.length > this.state.mines.length) {
-            return false;
-          }
+        if (dataitem.isFlagged) {
+          flags.push({x: dataitem.x, y: dataitem.y});
         }
       }
     }
     let gameWon = false;
     for (const mine of this.state.mines) {
       gameWon = false;
-      for (const cell of cells) {
-        if (mine.x === cell.x && mine.y === cell.y) {
-          gameWon = true;
+      if (flags.length <= this.state.mines.length) {
+        for (const flag of flags) {
+          if (mine.x === flag.x && mine.y === flag.y) {
+            gameWon = true;
+          }
         }
       }
       if (gameWon === false) {
@@ -202,8 +203,9 @@ class Board extends React.Component {
 
   async componentDidUpdate() {
     let updatedData = this.state.boardData;
+    console.log(this.checkWinCondition(updatedData));
     if (this.checkWinCondition(updatedData) === true) {
-      console.log('good game');
+      clearInterval(this.state.timer);
       let cells = await this.fetchBoard();
       for (const data of cells) {
         updatedData[data.x][data.y].isRevealed = true;
@@ -216,7 +218,9 @@ class Board extends React.Component {
       }
       this.setState({
         boardData: updatedData,
+        gameStatus: 'won',
       });
+      this.props.getStatus(this.state.gameStatus);
     }
   }
 

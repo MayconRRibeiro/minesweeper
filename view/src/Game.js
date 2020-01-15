@@ -14,9 +14,11 @@ class Game extends React.Component {
       mines: null,
       minesRemaining: null,
       time: null,
+      gameStatus: ':)'
     };
     this.getMinesRemainingCallback = this.getMinesRemainingCallback.bind(this);
     this.getTimeCallback = this.getTimeCallback.bind(this);
+    this.getGameStatusCallback = this.getGameStatusCallback.bind(this);
     this.reload = this.reload.bind(this);
     this.boardElement = React.createRef();
   }
@@ -55,8 +57,14 @@ class Game extends React.Component {
   getTimeCallback(dataFromChild) {
     this.setState({time: ('000' + dataFromChild).substr(-3)});
   }
-  gameStatus() {
-    return ':)';
+  getGameStatusCallback(datFromChild) {
+    if(datFromChild==='running' || datFromChild==='stop'){
+      this.setState({gameStatus:':)'});
+    }else if(datFromChild ==='lost'){
+      this.setState({gameStatus:':('});
+    }else if (datFromChild==='won'){
+      this.setState({gameStatus:'B)'});
+    }
   }
   async reload() {
     await this.startGame();
@@ -103,7 +111,7 @@ class Game extends React.Component {
                   <span className="centered-text">{minesRemaining}</span>
                 </div>
                 <div className="info hidden" onClick={this.reload}>
-                  <span>{this.gameStatus()}</span>
+                  <span>{this.state.gameStatus}</span>
                 </div>
                 <div className="timer">
                   <span className="centered-text">{time}</span>
@@ -119,6 +127,7 @@ class Game extends React.Component {
               difficulty={this.props.difficulty}
               toggle={this.getMinesRemainingCallback}
               getTime = {this.getTimeCallback}
+              getStatus={this.getGameStatusCallback}
             />
           </div>
           <div className="buttons">

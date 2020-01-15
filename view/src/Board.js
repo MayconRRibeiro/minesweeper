@@ -121,18 +121,6 @@ class Board extends React.Component {
     this.fetchCellsToReveal(x, y);
   }
 
-  getFlags(data) {
-    let flags = [];
-    for (const datarow of data) {
-      for (const dataitem of datarow) {
-        if (dataitem.isFlagged) {
-          flags.push({x: dataitem.x, y: dataitem.y});
-        }
-      }
-    }
-    return flags;
-  }
-
   checkWinCondition(data) {
     let cells = [];
     for (const datarow of data) {
@@ -182,13 +170,31 @@ class Board extends React.Component {
     });
   }
 
-  componentDidUpdate(){
-    let updatedData = this.state.boardData;
-    console.log(this.checkWinCondition(updatedData));
-    if (this.checkWinCondition(updatedData) === true) {
-      console.log('good game ');
-    }
+  async fetchBoard() {
+    const url = 'http://127.0.0.1:8080/game/' + this.props.gameid + '/reveal';
+    let response = await fetch(url, {method: 'get'});
+    const json = await response.json();
+    return json.cells;
+  }
 
+  async componentDidUpdate() {
+    let updatedData = this.state.boardData;
+    if (this.checkWinCondition(updatedData) === true) {
+      console.log('good game');
+      let cells = await this.fetchBoard();
+      for (const data of cells) {
+        updatedData[data.x][data.y].isRevealed = true;
+        if (data.status === -1) {
+          updatedData[data.x][data.y].isFlagged = true;
+          //this.deleteGame();
+        } else {
+          updatedData[data.x][data.y].neighbour = data.status;
+        }
+      }
+      this.setState({
+        boardData: updatedData,
+      });
+    }
   }
 
   onUnload = event => {

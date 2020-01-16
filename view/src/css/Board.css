@@ -89,12 +89,12 @@
   align-items: center;
 }
 .board-row {
-
+  vertical-align: top;
   background-color: #bdbdbd;
   margin: 0;
   padding: 0;
   display: inline-block;
-  margin-top:5px;
+  margin-top: 5px;
 }
 .board-row-easy {
   width: 12.5%;

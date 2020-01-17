@@ -13,7 +13,6 @@ class Board extends React.Component {
       mines: null,
       timer: null,
     };
-    this.add = this.add.bind(this);
   }
 
   initBoard(height, width) {
@@ -71,13 +70,13 @@ class Board extends React.Component {
     return result;
   }
 
-  async revealAllMines(updatedData) {
+  revealAllMines(updatedData) {
     for (const mine of this.state.mines) {
       updatedData[mine.x][mine.y].isMine = true;
     }
   }
 
-  async resize() {
+  resize() {
     var cw = $('.cell').width();
     $('.cell').css({height: cw + 'px'});
     if (cw - 4 > 6) {
@@ -115,7 +114,7 @@ class Board extends React.Component {
     });
   }
 
-  async add() {
+  add=() =>{
     let seconds = this.state.seconds;
     if (seconds === 999) {
       return;
@@ -125,13 +124,12 @@ class Board extends React.Component {
     this.props.getTime(this.state.seconds);
   }
 
-  async timer() {
+  timer() {
     let timer = setInterval(this.add, 1000);
     this.setState({timer: timer});
   }
 
-  async handleClick(x, y) {
-    //console.log(this.state.gameStatus);
+  async handleClick  (x, y) {
     if (this.state.gameStatus == 'stop') {
       this.timer();
       this.setState({gameStatus: 'running'});
@@ -144,7 +142,7 @@ class Board extends React.Component {
       return null;
     }
     this.fetchCellsToReveal(x, y);
-  }
+  };
 
   checkWinCondition(data) {
     let flags = [];
@@ -172,7 +170,7 @@ class Board extends React.Component {
     return true;
   }
 
-  _handleContextMenu(e, x, y) {
+  _handleContextMenu  (e, x, y) {
     e.preventDefault();
     let updatedData = this.state.boardData;
     let mines = this.state.mineCount;
@@ -192,7 +190,7 @@ class Board extends React.Component {
       boardData: updatedData,
       mineCount: mines,
     });
-  }
+  };
 
   async fetchBoard() {
     const url = 'http://127.0.0.1:8080/game/' + this.props.gameid + '/reveal';
@@ -224,7 +222,7 @@ class Board extends React.Component {
     }
   }
 
-  onUnload = event => {
+  onUnload (event) {
     event.preventDefault();
     event.returnValue = 'bruh';
   };

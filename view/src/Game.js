@@ -14,16 +14,12 @@ class Game extends React.Component {
       mines: null,
       minesRemaining: null,
       time: null,
-      gameStatus: ':)'
+      gameStatus: ':)',
     };
-    this.getMinesRemainingCallback = this.getMinesRemainingCallback.bind(this);
-    this.getTimeCallback = this.getTimeCallback.bind(this);
-    this.getGameStatusCallback = this.getGameStatusCallback.bind(this);
-    this.reload = this.reload.bind(this);
     this.boardElement = React.createRef();
   }
 
-  async startGame() {
+  async startGame  () {
     const url = new URL('http://127.0.0.1:8080/game/');
     this.setState({difficulty: this.props.difficulty});
     const params = {difficulty: this.props.difficulty};
@@ -31,9 +27,9 @@ class Game extends React.Component {
     let response = await fetch(url, {method: 'POST'});
     const json = await response.json();
     this.setState({gameid: json.id});
-  }
+  };
 
-  async getGameParams() {
+  async getGameParams  () {
     const url = 'http://127.0.0.1:8080/game/' + this.state.gameid;
     let response = await fetch(url, {method: 'get'});
     const json = await response.json();
@@ -44,29 +40,32 @@ class Game extends React.Component {
       minesRemaining: ('000' + json.minesCount).substr(-3),
       time: '000',
     });
-  }
+  };
 
-  async componentWillMount() {
+  async componentWillMount ()  {
     await this.startGame();
     await this.getGameParams();
-  }
+  };
 
-  getMinesRemainingCallback(dataFromChild) {
+  getMinesRemainingCallback = dataFromChild => {
     this.setState({minesRemaining: ('000' + dataFromChild).substr(-3)});
-  }
-  getTimeCallback(dataFromChild) {
+  };
+
+  getTimeCallback = dataFromChild => {
     this.setState({time: ('000' + dataFromChild).substr(-3)});
-  }
-  getGameStatusCallback(datFromChild) {
-    if(datFromChild==='running' || datFromChild==='stop'){
-      this.setState({gameStatus:':)'});
-    }else if(datFromChild ==='lost'){
-      this.setState({gameStatus:':('});
-    }else if (datFromChild==='won'){
-      this.setState({gameStatus:'B)'});
+  };
+
+  getGameStatusCallback = datFromChild => {
+    if (datFromChild === 'running' || datFromChild === 'stop') {
+      this.setState({gameStatus: ':)'});
+    } else if (datFromChild === 'lost') {
+      this.setState({gameStatus: ':('});
+    } else if (datFromChild === 'won') {
+      this.setState({gameStatus: 'B)'});
     }
-  }
-  async reload() {
+  };
+
+  reload = async () => {
     await this.startGame();
     await this.getGameParams();
     this.boardElement.current.resetBoard(
@@ -74,9 +73,9 @@ class Game extends React.Component {
       this.state.width,
       this.state.mines
     );
-  }
+  };
 
-  render() {
+  render () {
     const {
       difficulty,
       height,
@@ -126,7 +125,7 @@ class Game extends React.Component {
               gameid={this.state.gameid}
               difficulty={this.props.difficulty}
               toggle={this.getMinesRemainingCallback}
-              getTime = {this.getTimeCallback}
+              getTime={this.getTimeCallback}
               getStatus={this.getGameStatusCallback}
             />
           </div>
@@ -138,7 +137,7 @@ class Game extends React.Component {
       );
     }
     return <div className="game">Loading</div>;
-  }
+  };
 }
 
 export default Game;

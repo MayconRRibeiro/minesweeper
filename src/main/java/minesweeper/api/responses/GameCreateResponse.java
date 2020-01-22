@@ -10,5 +10,4 @@ public class GameCreateResponse {
   public String getId() {
     return id;
   }
-
 }

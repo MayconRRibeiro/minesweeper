@@ -1,7 +1,7 @@
 package minesweeper.api.responses;
 
-import minesweeper.api.logic.Game;
 import minesweeper.api.logic.Difficulty;
+import minesweeper.api.logic.Game;
 
 public class GameStatusResponse {
   private String id;
@@ -34,7 +34,7 @@ public class GameStatusResponse {
     return minesCount;
   }
 
-public Difficulty getDifficulty() {
-  return difficulty;
-}
+  public Difficulty getDifficulty() {
+    return difficulty;
+  }
 }

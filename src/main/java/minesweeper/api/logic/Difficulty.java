@@ -2,6 +2,6 @@ package minesweeper.api.logic;
 
 public enum Difficulty {
   easy,
-  medium, 
+  medium,
   hard
 }

@@ -67,24 +67,9 @@ public class Game {
     this.minesLocations = new LinkedList<Point>();
     placeMines();
     placeNumbers();
-    // printCells();
   }
 
   public Game() {}
-
-  public void printCells() {
-
-    for (int[] x : this.cells) {
-      for (int y : x) {
-        if (y != -1) {
-          System.out.print("+" + y + "    ");
-        } else {
-          System.out.print(y + "    ");
-        }
-      }
-      System.out.println();
-    }
-  }
 
   public void placeMines() {
     Random rng = new Random();
@@ -106,32 +91,15 @@ public class Game {
         if (this.cells[i][j] == -1) {
           continue;
         }
-        // for ( in
-        // zamienic na for 44:54
         int counter = 0;
-        if (isValidCell(i - 1, j - 1) && this.cells[i - 1][j - 1] == -1) {
-          counter++;
-        }
-        if (isValidCell(i - 1, j) && this.cells[i - 1][j] == -1) {
-          counter++;
-        }
-        if (isValidCell(i - 1, j + 1) && this.cells[i - 1][j + 1] == -1) {
-          counter++;
-        }
-        if (isValidCell(i, j - 1) && this.cells[i][j - 1] == -1) {
-          counter++;
-        }
-        if (isValidCell(i, j + 1) && this.cells[i][j + 1] == -1) {
-          counter++;
-        }
-        if (isValidCell(i + 1, j - 1) && this.cells[i + 1][j - 1] == -1) {
-          counter++;
-        }
-        if (isValidCell(i + 1, j) && this.cells[i + 1][j] == -1) {
-          counter++;
-        }
-        if (isValidCell(i + 1, j + 1) && this.cells[i + 1][j + 1] == -1) {
-          counter++;
+        for (int xOffset = -1; xOffset < 2; xOffset++) {
+          for (int yOffset = -1; yOffset < 2; yOffset++) {
+            int tmpX = i + xOffset;
+            int tmpY = j + yOffset;
+            if (isValidCell(tmpX, tmpY) && this.cells[tmpX][tmpY] == -1) {
+              counter++;
+            }
+          }
         }
         this.cells[i][j] = counter;
       }
@@ -151,7 +119,6 @@ public class Game {
         int i = x + xOffset;
         int j = y + yOffset;
         if (i > -1 && i < this.x && j > -1 && j < this.y) {
-          // TODO
           if (this.cells[i][j] != -1 && this.revealed[i][j] == false) {
             this.revealed[i][j] = true;
             response.add(new CellStatusResponse(i, j, this.cells[i][j]));
@@ -188,10 +155,10 @@ public class Game {
     return response;
   }
 
-  public List<CellStatusResponse> revealBoard(){
+  public List<CellStatusResponse> revealBoard() {
     List<CellStatusResponse> response = new LinkedList<CellStatusResponse>();
-    for(int x = 0; x< this.x; x++){
-      for(int y = 0; y< this.y; y++){
+    for (int x = 0; x < this.x; x++) {
+      for (int y = 0; y < this.y; y++) {
         response.add(new CellStatusResponse(x, y, this.cells[x][y]));
       }
     }

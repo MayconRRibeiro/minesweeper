@@ -9,9 +9,11 @@ class Board extends React.Component {
       boardData: this.initBoard(this.props.height, this.props.width),
       seconds: 0,
       gameStatus: 'stop',
-      mineCount: ('000' + this.props.mines).substr(-3),
+      mineCount: this.props.mines,
+      flagsCount: 0,
       mines: null,
       timer: null,
+      flagButtonClicked: false,
     };
   }
 
@@ -33,22 +35,28 @@ class Board extends React.Component {
     return data;
   }
 
-  async resetBoard(height, width) {
+  async resetBoard(height, width, mineCount) {
     this.setState({
       boardData: this.initBoard(height, width),
       seconds: 0,
       gameStatus: 'running',
     });
     const mines = await this.fetchAllMines();
-    this.setState({mines: mines, gameStatus: 'stop'});
+    this.setState({
+      mines: mines,
+      gameStatus: 'stop',
+      mineCount: mineCount,
+      flagsCount: 0,
+    });
     this.props.getStatus(this.state.gameStatus);
     clearInterval(this.state.timer);
-    console.log(this.state);
   }
 
-  async deleteGame() {
-    const url = 'http://127.0.0.1:8080/game/' + this.props.gameid;
-    await fetch(url, {method: 'delete'});
+  async fetchBoard() {
+    const url = 'http://127.0.0.1:8080/game/' + this.props.gameid + '/reveal';
+    let response = await fetch(url, {method: 'get'});
+    const json = await response.json();
+    return json.cells;
   }
 
   async fetchCellsToReveal(x, y) {
@@ -70,27 +78,9 @@ class Board extends React.Component {
     return result;
   }
 
-  revealAllMines(updatedData) {
-    for (const mine of this.state.mines) {
-      updatedData[mine.x][mine.y].isMine = true;
-    }
-  }
-
-  resize() {
-    var cw = $('.cell').width();
-    $('.cell').css({height: cw + 'px'});
-    if (cw - 4 > 6) {
-      cw = cw - 4;
-    }
-    $('.cell').css({'font-size': cw});
-  }
-
-  async componentDidMount() {
-    this.resize();
-    window.addEventListener('resize', this.resize.bind(this));
-    const mines = await this.fetchAllMines();
-    this.setState({mines: mines});
-    console.log(this.state);
+  async deleteGame() {
+    const url = 'http://127.0.0.1:8080/game/' + this.props.gameid;
+    await fetch(url, {method: 'delete'});
   }
 
   async revealCells(dataFromChild) {
@@ -103,8 +93,8 @@ class Board extends React.Component {
         this.setState({gameStatus: 'lost'});
         this.props.getStatus(this.state.gameStatus);
         clearInterval(this.state.timer);
-        await this.revealAllMines(updatedData);
-        //this.deleteGame();
+        this.revealAllMines(updatedData);
+        this.deleteGame();
       } else {
         updatedData[data.x][data.y].neighbour = data.status;
       }
@@ -114,44 +104,87 @@ class Board extends React.Component {
     });
   }
 
-  add=() =>{
-    let seconds = this.state.seconds;
-    if (seconds === 999) {
-      return;
+  revealAllMines(updatedData) {
+    for (const mine of this.state.mines) {
+      updatedData[mine.x][mine.y].isMine = true;
     }
-    seconds++;
-    this.setState({seconds: seconds});
-    this.props.getTime(this.state.seconds);
   }
 
-  timer() {
-    let timer = setInterval(this.add, 1000);
-    this.setState({timer: timer});
-  }
-
-  async handleClick  (x, y) {
-    if (this.state.gameStatus == 'stop') {
+  flagCell(x, y) {
+    if (this.state.gameStatus === 'stop') {
       this.timer();
       this.setState({gameStatus: 'running'});
       this.props.getStatus(this.state.gameStatus);
     }
-    if (
-      this.state.boardData[x][y].isRevealed ||
-      this.state.boardData[x][y].isFlagged
-    ) {
-      return null;
+    let updatedData = this.state.boardData;
+    let mines = this.state.mineCount;
+    let flags = this.state.flagsCount;
+    if (updatedData[x][y].isRevealed) {
+      return;
     }
-    this.fetchCellsToReveal(x, y);
-  };
+    if (updatedData[x][y].isFlagged) {
+      updatedData[x][y].isFlagged = false;
+      flags--;
+    } else {
+      updatedData[x][y].isFlagged = true;
+      flags++;
+    }
+    if (flags > this.props.mines) {
+      mines = 0;
+    } else {
+      mines = mines - flags;
+      if (mines < 0) {
+        mines = 0;
+      } else if (mines > this.props.mines) {
+        mines = this.props.mines;
+      }
+    }
+    this.props.toggle(mines);
+    this.setState({
+      boardData: updatedData,
+      flagsCount: flags,
+    });
+  }
+
+  async handleClick(x, y) {
+    if (this.state.gameStatus === 'stop') {
+      this.timer();
+      this.setState({gameStatus: 'running'});
+      this.props.getStatus(this.state.gameStatus);
+    }
+    if (this.state.flagButtonClicked === true) {
+      this.flagCell(x, y);
+    } else {
+      if (
+        this.state.boardData[x][y].isRevealed ||
+        this.state.boardData[x][y].isFlagged
+      ) {
+        return null;
+      }
+      this.fetchCellsToReveal(x, y);
+    }
+  }
+
+  handleLeftClick(e, x, y) {
+    e.preventDefault();
+    this.flagCell(x, y);
+  }
 
   checkWinCondition(data) {
     let flags = [];
+    let openCells = [];
     for (const datarow of data) {
       for (const dataitem of datarow) {
+        if (!dataitem.isRevealed) {
+          openCells.push({x: dataitem.x, y: dataitem.y});
+        }
         if (dataitem.isFlagged) {
           flags.push({x: dataitem.x, y: dataitem.y});
         }
       }
+    }
+    if (openCells.length === this.state.mines.length) {
+      return true;
     }
     let gameWon = false;
     for (const mine of this.state.mines) {
@@ -170,38 +203,36 @@ class Board extends React.Component {
     return true;
   }
 
-  _handleContextMenu  (e, x, y) {
-    e.preventDefault();
-    let updatedData = this.state.boardData;
-    let mines = this.state.mineCount;
-    // check if already revealed
-    if (updatedData[x][y].isRevealed) {
+  addSecond = () => {
+    let seconds = this.state.seconds;
+    if (seconds === 999) {
       return;
     }
-    if (updatedData[x][y].isFlagged) {
-      updatedData[x][y].isFlagged = false;
-      mines++;
-    } else {
-      updatedData[x][y].isFlagged = true;
-      mines--;
-      this.props.toggle(mines);
-    }
-    this.setState({
-      boardData: updatedData,
-      mineCount: mines,
-    });
+    seconds++;
+    this.setState({seconds: seconds});
+    this.props.getTime(this.state.seconds);
   };
 
-  async fetchBoard() {
-    const url = 'http://127.0.0.1:8080/game/' + this.props.gameid + '/reveal';
-    let response = await fetch(url, {method: 'get'});
-    const json = await response.json();
-    return json.cells;
+  timer() {
+    let timer = setInterval(this.addSecond, 1000);
+    this.setState({timer: timer});
+  }
+
+  resize() {
+    var cw = $('.cell').width();
+    $('.cell').css({height: cw + 'px'});
+    if (cw - 4 > 6) {
+      cw = cw - 4;
+    }
+    $('.cell').css({'font-size': cw});
+  }
+
+  onUnload(event) {
+    event.preventDefault();
   }
 
   async componentDidUpdate() {
     let updatedData = this.state.boardData;
-    console.log(this.checkWinCondition(updatedData));
     if (this.checkWinCondition(updatedData) === true) {
       clearInterval(this.state.timer);
       let cells = await this.fetchBoard();
@@ -209,7 +240,7 @@ class Board extends React.Component {
         updatedData[data.x][data.y].isRevealed = true;
         if (data.status === -1) {
           updatedData[data.x][data.y].isFlagged = true;
-          //this.deleteGame();
+          this.deleteGame();
         } else {
           updatedData[data.x][data.y].neighbour = data.status;
         }
@@ -222,10 +253,12 @@ class Board extends React.Component {
     }
   }
 
-  onUnload (event) {
-    event.preventDefault();
-    event.returnValue = 'bruh';
-  };
+  async componentDidMount() {
+    this.resize();
+    window.addEventListener('resize', this.resize.bind(this));
+    const mines = await this.fetchAllMines();
+    this.setState({mines: mines});
+  }
 
   componentWillUnmount() {
     window.addEventListener('beforeunload', this.onUnload);
@@ -240,7 +273,7 @@ class Board extends React.Component {
         a.push(
           <Cell
             onClick={() => this.handleClick(dataitem.x, dataitem.y)}
-            cMenu={e => this._handleContextMenu(e, dataitem.x, dataitem.y)}
+            onLeftClick={e => this.handleLeftClick(e, dataitem.x, dataitem.y)}
             value={dataitem}
           />
         );

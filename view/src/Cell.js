@@ -1,6 +1,4 @@
 import React from 'react';
-import logo from './b2.png';
-
 
 class Cell extends React.Component {
   getValue() {
@@ -9,7 +7,7 @@ class Cell extends React.Component {
       return '🚩';
     }
     if (value.isMine) {
-      return '';
+      return '💣';
     }
     if (value.neighbour === 0) {
       return;
@@ -18,18 +16,15 @@ class Cell extends React.Component {
   }
 
   render() {
-    const {value, onClick, cMenu} = this.props;
+    const {value, onClick, onLeftClick} = this.props;
     let className =
       'cell' +
       (value.isRevealed ? ' open' : ' hidden') +
       (value.isMine ? ' is-mine' : '') +
       (value.isFlagged ? ' is-flag' : '');
-
-    //console.log(className);
-
     return (
-      <div onClick={onClick} className={className} onContextMenu={cMenu}>
-        <a>{this.getValue()}</a>
+      <div onClick={onClick} className={className} onContextMenu={onLeftClick}>
+        <span>{this.getValue()}</span>
       </div>
     );
   }

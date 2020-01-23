@@ -19,7 +19,7 @@ class Home extends Component {
   render() {
     return (
       <HashRouter>
-        <div>
+        <div className='home'>
           <button onClick={this.onClickHanler}>Play</button>
           <ul id="choose-difficulty">
             <h1>choose difficulty </h1>
@@ -39,8 +39,6 @@ class Home extends Component {
               </NavLink>
             </li>
           </ul>
-          <h1>home</h1>
-          <a> press minesweeper to return home</a>
         </div>
       </HashRouter>
     );

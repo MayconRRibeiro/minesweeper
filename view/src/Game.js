@@ -1,5 +1,6 @@
 import React from 'react';
-import {NavLink, Link} from 'react-router-dom';
+import $ from 'jquery';
+import {NavLink} from 'react-router-dom';
 import logo from './images/bomb.png';
 import Board from './Board.js';
 
@@ -14,12 +15,12 @@ class Game extends React.Component {
       mines: null,
       minesRemaining: null,
       time: null,
-      gameStatus: ':)',
+      gameStatus: '😀',
     };
     this.boardElement = React.createRef();
   }
 
-  async startGame  () {
+  async startGame() {
     const url = new URL('http://127.0.0.1:8080/game/');
     this.setState({difficulty: this.props.difficulty});
     const params = {difficulty: this.props.difficulty};
@@ -27,43 +28,7 @@ class Game extends React.Component {
     let response = await fetch(url, {method: 'POST'});
     const json = await response.json();
     this.setState({gameid: json.id});
-  };
-
-  async getGameParams  () {
-    const url = 'http://127.0.0.1:8080/game/' + this.state.gameid;
-    let response = await fetch(url, {method: 'get'});
-    const json = await response.json();
-    this.setState({
-      width: json.x,
-      height: json.y,
-      mines: json.minesCount,
-      minesRemaining: ('000' + json.minesCount).substr(-3),
-      time: '000',
-    });
-  };
-
-  async componentWillMount ()  {
-    await this.startGame();
-    await this.getGameParams();
-  };
-
-  getMinesRemainingCallback = dataFromChild => {
-    this.setState({minesRemaining: ('000' + dataFromChild).substr(-3)});
-  };
-
-  getTimeCallback = dataFromChild => {
-    this.setState({time: ('000' + dataFromChild).substr(-3)});
-  };
-
-  getGameStatusCallback = datFromChild => {
-    if (datFromChild === 'running' || datFromChild === 'stop') {
-      this.setState({gameStatus: ':)'});
-    } else if (datFromChild === 'lost') {
-      this.setState({gameStatus: ':('});
-    } else if (datFromChild === 'won') {
-      this.setState({gameStatus: 'B)'});
-    }
-  };
+  }
 
   reload = async () => {
     await this.startGame();
@@ -75,7 +40,63 @@ class Game extends React.Component {
     );
   };
 
-  render () {
+  async getGameParams() {
+    const url = 'http://127.0.0.1:8080/game/' + this.state.gameid;
+    let response = await fetch(url, {method: 'get'});
+    const json = await response.json();
+    this.setState({
+      width: json.x,
+      height: json.y,
+      mines: json.minesCount,
+      minesRemaining: ('000' + json.minesCount).substr(-3),
+      time: '000',
+    });
+  }
+
+  getMinesRemainingCallback = dataFromChild => {
+    this.setState({minesRemaining: ('000' + dataFromChild).substr(-3)});
+  };
+
+  getTimeCallback = dataFromChild => {
+    this.setState({time: ('000' + dataFromChild).substr(-3)});
+  };
+
+  getGameStatusCallback = datFromChild => {
+    if (datFromChild === 'running' || datFromChild === 'stop') {
+      this.setState({gameStatus: '😀'});
+    } else if (datFromChild === 'lost') {
+      this.setState({gameStatus: '😖'});
+    } else if (datFromChild === 'won') {
+      this.setState({gameStatus: '😎'});
+    }
+  };
+
+  clickButtonEvent = () => {
+    this.boardElement.current.setState({flagButtonClicked: false});
+    let btn = $('.click');
+    if (!btn.hasClass('not-clicked')) {
+      return;
+    }
+    let btns = $('.btn');
+    btns.toggleClass('not-clicked');
+  };
+
+  flagButtonEvent = () => {
+    this.boardElement.current.setState({flagButtonClicked: true});
+    let btn = $('.flag');
+    if (!btn.hasClass('not-clicked')) {
+      return;
+    }
+    let btns = $('.btn');
+    btns.toggleClass('not-clicked');
+  };
+
+  async componentWillMount() {
+    await this.startGame();
+    await this.getGameParams();
+  }
+
+  render() {
     const {
       difficulty,
       height,
@@ -130,14 +151,25 @@ class Game extends React.Component {
             />
           </div>
           <div className="buttons">
-            <button className="choose-click hidden">flag</button>
-            <button className="choose-flag">click</button>
+            <button className="btn click" onClick={this.clickButtonEvent}>
+              <span role="img" aria-label="click">
+                🖱️
+              </span>
+            </button>
+            <button
+              className="btn flag not-clicked"
+              onClick={this.flagButtonEvent}
+            >
+              <span role="img" aria-label="flag">
+                🚩
+              </span>
+            </button>
           </div>
         </div>
       );
     }
     return <div className="game">Loading</div>;
-  };
+  }
 }
 
 export default Game;

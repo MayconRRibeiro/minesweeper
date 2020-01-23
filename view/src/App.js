@@ -6,33 +6,42 @@ import Game from './Game';
 class App extends Component {
   render() {
     return (
-      <HashRouter>
+      <div className="main">
         <div>
-          <h1>
-            <NavLink exact to="/" href="">
-              minesweeper
-            </NavLink>
-          </h1>
-          <div className="content">
-            <Route exact path="/" component={Home} />
-            <Route
-              exact
-              path="/easy"
-              component={() => <Game difficulty="easy" />}
-            />
-            <Route
-              exact
-              path="/medium"
-              component={() => <Game difficulty="medium" />}
-            />
-            <Route
-              exact
-              path="/hard"
-              component={() => <Game difficulty="hard" />}
-            />
-          </div>
+          <HashRouter>
+            <div>
+              <div className="rout">
+                <h1>
+                  <NavLink exact to="/" href="">
+                    welcome to minesweeper
+                  </NavLink>
+                </h1>
+                <a href="https://github.com/hoob3rt/minesweeper">
+                  click here to view source code
+                </a>
+              </div>
+              <div className="content">
+                <Route exact path="/" component={Home} />
+                <Route
+                  exact
+                  path="/easy"
+                  component={() => <Game difficulty="easy" />}
+                />
+                <Route
+                  exact
+                  path="/medium"
+                  component={() => <Game difficulty="medium" />}
+                />
+                <Route
+                  exact
+                  path="/hard"
+                  component={() => <Game difficulty="hard" />}
+                />
+              </div>
+            </div>
+          </HashRouter>
         </div>
-      </HashRouter>
+      </div>
     );
   }
 }

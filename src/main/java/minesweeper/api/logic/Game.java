@@ -193,10 +193,6 @@ public class Game {
     return revealed;
   }
 
-  public int getMinesCount() {
-    return minesCount;
-  }
-
   public List<Point> getMinesLocations() {
     return minesLocations;
   }

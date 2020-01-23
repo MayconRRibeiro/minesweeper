@@ -11,12 +11,15 @@ class App extends Component {
           <HashRouter>
             <div>
               <div className="rout">
-                <h1>
+                <h1 className = "header">
                   <NavLink exact to="/" href="">
                     welcome to minesweeper
                   </NavLink>
                 </h1>
-                <a href="https://github.com/hoob3rt/minesweeper">
+                <a
+                  className="git-link"
+                  href="https://github.com/hoob3rt/minesweeper"
+                >
                   click here to view source code
                 </a>
               </div>

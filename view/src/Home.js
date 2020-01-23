@@ -9,34 +9,48 @@ class Home extends Component {
 
   onClickHanler() {
     let x = document.getElementById('choose-difficulty');
-    if (x.style.display === 'none') {
-      x.style.display = 'block';
+    x.style.display = 'block';
+    if (x.style.opacity !== '1') {
+      window.setTimeout(function() {
+        x.style.opacity = 1;
+        x.style.transform = 'scale(1)';
+      }, 10);
     } else {
-      x.style.display = 'none';
+      window.setTimeout(function() {
+        x.style.opacity = 0;
+        x.style.transform = 'scale(1)';
+      }, 10);
     }
   }
 
   render() {
     return (
       <HashRouter>
-        <div className='home'>
-          <button onClick={this.onClickHanler}>Play</button>
+        <div className="home">
+          <button className="play" onClick={this.onClickHanler}>
+            Play
+          </button>
           <ul id="choose-difficulty">
-            <h1>choose difficulty </h1>
             <li>
+              <button>
               <NavLink exact to="/easy" href="/easy">
                 easy
               </NavLink>
+                </button>
             </li>
             <li>
+              <button>
               <NavLink exact to="/medium" href="/medium">
                 medium
               </NavLink>
+                </button>
             </li>
             <li>
+              <button>
               <NavLink exact to="/hard" href="/hard">
                 hard
               </NavLink>
+                </button>
             </li>
           </ul>
         </div>
